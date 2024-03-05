@@ -46,7 +46,7 @@
             
             <div class="col-lg-4 col-md-6 p-4">
                 <div class="card border-primary rounded custom-shadow">
-                    <a href="#">
+                    <a href="{% url 'product' product_slug=product.slug %}">
                         <img src="{{ product.image.url }}" class="card-img-top" alt="...">
                     </a>
 

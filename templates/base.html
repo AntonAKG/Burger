@@ -94,11 +94,11 @@
                              height="16">
                     </button>
                     <ul class="dropdown-menu bg-dark" data-bs-theme="dark">
-                        <li><a class="dropdown-item text-white" href="{% url "catalog" %}">Всі товари</a></li>
+{#                        <li><a class="dropdown-item text-white" href="{% url "catalog" category.slug %}">Всі товари</a></li>#}
                         {% tag_categories as categories %}
                     
                         {% for category in categories %}
-                            <li><a class="dropdown-item text-white" href="{% url "main_index" %}">{{category.name}}</a></li>
+                            <li><a class="dropdown-item text-white" href="{% url "catalog" category.slug  %}">{{category.name}}</a></li>
                         {% endfor %}
 
                     </ul>
