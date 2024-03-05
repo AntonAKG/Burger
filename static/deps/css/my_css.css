@@ -36,3 +36,8 @@ body {
   border-radius: 15px;
   font-size: 0.7rem;
 }
+
+.card-img-top{
+  height: 344px;
+  width: 267px;
+}
