@@ -7,14 +7,24 @@ from shop.models import Product
 class CatalogView(ListView):
     model = Product
     template_name = 'shop/catalog.html'
-    paginate_by = 1
+    paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        on_sale = self.request.GET.get('on_sale', None)
+        order_by = self.request.GET.get('order_by', None)
+
         if self.kwargs['category_slug'] == 'all':
             products = Product.objects.all()
         else:
             products = Product.objects.filter(category__slug=self.kwargs['category_slug'])
+
+        if on_sale:
+            products = products.filter(discount__gt=0)
+
+        if order_by and order_by != 'default':
+            products = products.order_by(order_by)
 
         paginator = Paginator(products, self.paginate_by)
         page_number = self.request.GET.get('page')
