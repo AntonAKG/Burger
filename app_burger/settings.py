@@ -27,8 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# AUTH_USER_MODEL = "account.User"
-
+AUTH_USER_MODEL = "account.User"
+LOGOUT_REDIRECT_URL = "main_index"
 # Application definition
 
 INSTALLED_APPS = [
@@ -84,9 +84,12 @@ WSGI_APPLICATION = 'app_burger.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'app',
+        'USER': 'postgres',
+        'PASSWORD': '1801',
+        'HOST': 'localhost'
     }
 }
 
