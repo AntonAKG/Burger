@@ -6,6 +6,10 @@ from .models import Cart
 
 
 class CartAddView(View):
+    """
+    Add a product to the cart
+    """
+
     @staticmethod
     def get(request, *args, **kwargs):
         product_slug = kwargs["product_slug"]
@@ -21,4 +25,16 @@ class CartAddView(View):
             else:
                 Cart.objects.create(user=request.user, product=product, quantity=1)
 
+        return redirect(request.META["HTTP_REFERER"])
+
+
+class CartRemoveView(View):
+    """
+    Remove a product from the cart
+    """
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        cart = get_object_or_404(Cart, id=kwargs["cart_id"])
+        cart.delete()
         return redirect(request.META["HTTP_REFERER"])

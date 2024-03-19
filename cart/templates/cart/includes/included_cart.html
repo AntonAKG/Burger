@@ -1,5 +1,8 @@
 {% load static %}
 
+{% load cart_tags %}
+
+{% user_cart request as carts %}
 
 <!-- Разметка корзины -->
 <div class="card mb-3 text-bg-light shadow-lg">
@@ -37,7 +40,7 @@
                     </div>
                     <div class="col p-0"><strong>{{ cart.product_price }}</strong></div>
                     <div class="col p-0">
-                        <a href="#" class="remove-from-cart" data-cart-id="">
+                        <a href="{% url 'cart_remove' cart.id %}" class="remove-from-cart" data-cart-id="">
                             <img class="mx-1" src="{% static 'deps/icons/trash3-fill.svg' %}"
                                  alt="Catalog Icon" width="16" height="16">
                         </a>
@@ -50,8 +53,15 @@
 
 <div class="card mb-3 shadow-lg">
     <div class="card-footer">
-        <p class="float-left">Итого <strong>{{ carts.total_quantity }}</strong> товар(а) на сумму</p>
+        <p class="float-left"><strong>{{ carts.total_quantity }}</strong> товар(а) на сумму</p>
         <h4 class="float-left"><strong>{{ carts.total_price }}$</strong></h4>
     </div>
 </div>
+
+{% if carts %}
+<a class="btn btn-dark" href="#">
+                        Оформити замовлення
+                    </a>	
+{% endif %} 
+
                                 
