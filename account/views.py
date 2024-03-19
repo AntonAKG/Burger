@@ -12,29 +12,29 @@ User = get_user_model()
 
 
 class LoginClassView(LoginView):
-    template_name = 'registration/login.html'
+    template_name = "registration/login.html"
     LoginView.authentication_form = LoginForm
 
-    success_url = reverse_lazy('main_index')
+    success_url = reverse_lazy("main_index")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['title'] = 'Sign in'
+        context["title"] = "Sign in"
 
         return context
 
 
 class RegisterView(CreateView):
     form_class = RegisterForm
-    template_name = 'registration/register.html'
-    success_url = reverse_lazy('login')
+    template_name = "registration/register.html"
+    success_url = reverse_lazy("login")
 
     def form_valid(self, form):
         response = super(RegisterView, self).form_valid(form)
 
-        email = form.cleaned_data.get('email')
-        password = form.cleaned_data.get('password1')
+        email = form.cleaned_data.get("email")
+        password = form.cleaned_data.get("password1")
 
         user = authenticate(self.request, email=email, password=password)
 
@@ -50,13 +50,13 @@ class RegisterView(CreateView):
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'account/profile.html'
+    template_name = "account/profile.html"
 
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Profile'
-        context['form'] = UserProfileForm(instance=self.request.user)
+        context["title"] = "Profile"
+        context["form"] = UserProfileForm(instance=self.request.user)
         return context
 
     @staticmethod
@@ -65,13 +65,24 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
         if form.is_valid():
 
-            email = form.cleaned_data['email']
+            email = form.cleaned_data["email"]
             if User.objects.filter(email=email).exists():
                 form.save()
-                form.add_error('email', 'Користувач з такою адресою електронної пошти вже існує.')
+                form.add_error(
+                    "email", "Користувач з такою адресою електронної пошти вже існує."
+                )
             else:
 
                 form.save()
-                return redirect('profile')
+                return redirect("profile")
 
-        return render(request, 'account/profile.html', {'form': form})
+        return render(request, "account/profile.html", {"form": form})
+
+
+class UserCart(TemplateView):
+    template_name = "account/cart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Cart"
+        return context

@@ -1,4 +1,5 @@
 {% load static %}
+{% load static %}
 {% load shop_tags %}
 
 <!DOCTYPE html>
@@ -45,9 +46,6 @@
                             <li><a class="dropdown-item  text-white" href="{% url 'main_about' %}">Про нас</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link  text-white" href="#">Кошик</a>
-                    </li>
                     {% if not user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link  text-white" href="{% url 'login' %}">Увійти</a>
@@ -59,17 +57,16 @@
                                 Мій профіль
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item  text-white" href="carts/cart.html">Кошик</a></li>
+                                <li><a class="dropdown-item  text-white" href="{% url 'user-cart' %}">Кошик</a></li>
                                 <li><a class="dropdown-item  text-white" href="{% url 'profile' %}">Особистий кабінет</a>
                                 </li>
                                 {% if user.is_admin or user.is_staff %}
-                                    <li><a class="dropdown-item  text-white" href="{% url "admin:index" %}">Адмін
+                                    <li><a class="dropdown-item  text-white" target="_blank" href="{% url "admin:index" %}">Адмін
                                         панель</a></li>
                                 {% endif %}
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                {#                                    <li><a class="dropdown-item  text-white" href="{% url 'logout' %}">Вийти</a></li>#}
                                 <a class="dropdown-item text-white" href="#"
                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Вийти</a>
                                 <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
@@ -90,9 +87,7 @@
 </header>
 <section>
     <div class="container">
-        <!-- Каталог и корзина с фиксированным расположением на странице -->
         <div class="row mt-1 position-fixed z-3">
-            <!-- Каталог -->
             <div class="dropdown mb-2">
                 <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
@@ -101,7 +96,6 @@
                          height="16">
                 </button>
                 <ul class="dropdown-menu bg-dark" data-bs-theme="dark">
-                    {#                        <li><a class="dropdown-item text-white" href="{% url "catalog" category.slug %}">Всі товари</a></li>#}
                     {% tag_categories as categories %}
 
                     {% for category in categories %}
@@ -110,21 +104,34 @@
                     {% endfor %}
 
                 </ul>
-            </div>
-            <!-- Значек корзины, вызывает модальное окно -->
-            {% block modal_cart %}{% endblock %}
-            <!-- Закончилась разметка модального окна -->
+            </div><div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h3 class="text-center mb-4">Корзина</h3>
+                                <div class="container" id="cart-items-container">
+                                    {% include "cart/includes/included_cart.html" %}
+                                </div>
+                                <a class="btn btn-dark" href="orders/create_order.html">
+                                    Оформить заказ
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
         </div>
     </div>
-    <!-- Контент -->
     <div class="container">
         <div class="row mt-1">
             <div class="col-lg-2">
-                <!-- Пустой блок на Ваше усмотрение -->
             </div>
             <div class="col-lg-10">
-                <!-- Контент на странице -->
-                {#                    {% include "includes/notifications.html" %}#}
                 {% block content %}{% endblock %}
             </div>
         </div>
