@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block modal_cart %}
-{% include 'includes/cart_button.html' %}
-{% endblock %}
 
 {% block content %}
     <div class="container mt-5">
@@ -36,7 +33,17 @@
                 <p class="card-text">Ціна: <strong>{{ product.price }}$</strong></p>
                 <h5 class="card-title">{{ product.name }}</h5>
                 <p class="card-text">{{ product.description }}.</p>
-                <a href="{% url 'cart_add' product.slug %}" class="btn btn-dark add-to-cart">Додати в кошик</a>
+                <!-- Другий шаблон -->
+                <form action="{% url 'cart_add' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <button type="submit" class="btn add-to-cart" data-product_id="{{ product.id }}">
+                        <i class="fas fa-cart-plus">
+                        Додати в кошик</i>
+
+                    </button>
+                </form>
+
             </div>
         </div>
     </div>
