@@ -4,18 +4,41 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, TemplateView
+from django.contrib.auth import login
+
 
 from account.forms import LoginForm, RegisterForm, UserProfileForm
+from cart.models import Cart
 
 User = get_user_model()
 
 
-class LoginClassView(LoginView):
+class LoginClassView(View):
+
     template_name = "registration/login.html"
-    LoginView.authentication_form = LoginForm
+    authentication_form = LoginForm
 
     success_url = reverse_lazy("main_index")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        # Get the session key and transfer the cart items to the user
+        session_key = self.request.session.session_key
+        print("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+        print(session_key)
+
+        if session_key:
+            carts = Cart.objects.filter(session_key=session_key)
+            print(carts)
+            for cart in carts:
+                cart.user = self.request.user
+                cart.session_key = None
+                cart.save()
+
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -31,21 +54,24 @@ class RegisterView(CreateView):
     success_url = reverse_lazy("login")
 
     def form_valid(self, form):
-        response = super(RegisterView, self).form_valid(form)
+        response = super().form_valid(form)
 
+        # Get the session key and transfer the cart items to the user
+        session_key = self.request.session.session_key
+        if session_key:
+            carts = Cart.objects.filter(session_key=session_key)
+            for cart in carts:
+                cart.user = self.request.user
+                cart.session_key = None
+                cart.save()
+
+        # Log in the user after registration
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password1")
-
         user = authenticate(self.request, email=email, password=password)
-
         if user:
-            user.set_password(password)
-            user.save()
+            login(self.request, user)
 
-        return response
-
-    def form_invalid(self, form):
-        response = super().form_invalid(form)
         return response
 
 
