@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% load cart_tags %}
+{% load static %}
+
+{% block content %}
+    <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
+        <div class="container">
+            <h3 class="text-center mb-4">Обрані товари</h3>
+            <div class="container" id="cart-items-container">
+                <!-- Розмітка кошика -->
+                {% user_cart request as carts %}
+                {% include 'cart/includes/included_cart.html' %}
+                <!-- Закінчилась розмітка кошика -->
+            </div>
+        </div>
+        <!-- Деталі замовлення -->
+        <div class="container">
+            <h3 class="text-center">Деталі замовлення</h3>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form action="{% url 'order_create' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_first_name" class="form-label">Ім'я*:</label>
+                                <input type="text" class="form-control" id="id_first_name"
+                                       value="{% if form.first_name.value %}{{ form.first_name.value }}{% endif %}"
+                                       name="first_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_last_name" class="form-label">Прізвище*:</label>
+                                <input type="text" class="form-control" id="id_last_name"
+                                       value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}"
+                                       name="last_name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_phone_number" class="form-label">Номер телефону*:</label>
+                                <input type="text" class="form-control" id="id_phone_number" name="phone_number"
+                                       placeholder="У форматі: XXX-XXX-XX-XX"
+                                       required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="delivery" class="form-label">Спосіб доставлення: </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="requires_delivery"
+                                           id="id_requires_delivery" value="1" checked>
+                                    <label class="form-check-label" for="id_requires_delivery">Потрібна
+                                        доставка</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="requires_delivery" id="id_self_pickup" value="0">
+
+                                    <label class="form-check-label" for="id_requires_delivery">Самовивіз</label>
+                                </div>
+                            </div>
+                            <div class="mb-3" id="deliveryAddressField">
+                                <label for="id_address" class="form-label">Адреса
+                                    доставки*:</label>
+                                <textarea class="form-control" id="id_address"
+                                          name="address" rows="2"></textarea>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Спосіб оплати: </label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="payment"
+                                           id="id_payment" value="0" checked>
+                                    <label class="form-check-label" for="id_payment">Оплата
+                                        карткою</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="payment"
+                                           id="id_payment" value="1">
+                                    <label class="form-check-label" for="id_payment">Готівкою/карткою
+                                        при отриманні</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-dark">Оформити замовлення</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deliveryAddressField = document.getElementById('deliveryAddressField');
+        const selfPickupInput = document.getElementById('id_self_pickup');
+
+        if (selfPickupInput.checked) {
+            deliveryAddressField.style.display = 'none';
+        }
+
+        function toggleDeliveryAddressField() {
+            if (selfPickupInput.checked) {
+                deliveryAddressField.style.display = 'none';
+            } else {
+                deliveryAddressField.style.display = 'block';
+            }
+        }
+
+        selfPickupInput.addEventListener('change', toggleDeliveryAddressField);
+    });
+</script>
+
+
+{% endblock %}

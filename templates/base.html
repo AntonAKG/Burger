@@ -47,7 +47,7 @@
                         </ul>
                     </li>
                 
-                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle text-white" href="{% url 'user-cart' %}">CART</a></li>
+                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle text-white" href="{% url 'user-cart' %}">Корзина</a></li>
                     {% if not user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link  text-white" href="{% url 'login' %}">Увійти</a>
@@ -81,10 +81,6 @@
                         </li>
                     {% endif %}
                 </ul>
-                <form class="d-flex" role="search" action="{% url 'search' %}" method="get">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success text-white" type="submit">Пошук</button>
-                </form>
             </div>
         </div>
     </nav>
