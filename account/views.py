@@ -1,16 +1,18 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, TemplateView
 from django.contrib.auth import login
+from django.db.models import Prefetch
 
 
 from account.forms import LoginForm, RegisterForm, UserProfileForm
 from cart.models import Cart
+from orders.models import Order, OrderItem
+
 
 User = get_user_model()
 
@@ -25,9 +27,7 @@ class LoginClassView(View):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        # Get the session key and transfer the cart items to the user
         session_key = self.request.session.session_key
-        print("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
         print(session_key)
 
         if session_key:
@@ -56,7 +56,6 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        # Get the session key and transfer the cart items to the user
         session_key = self.request.session.session_key
         if session_key:
             carts = Cart.objects.filter(session_key=session_key)
@@ -65,7 +64,6 @@ class RegisterView(CreateView):
                 cart.session_key = None
                 cart.save()
 
-        # Log in the user after registration
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password1")
         user = authenticate(self.request, email=email, password=password)
@@ -83,6 +81,20 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["title"] = "Profile"
         context["form"] = UserProfileForm(instance=self.request.user)
+
+        orders = (
+            Order.objects.filter(user=self.request.user)
+            .order_by("-id")
+            .prefetch_related(
+                Prefetch(
+                    "orderitem_set",
+                    queryset=OrderItem.objects.select_related("product"),
+                )
+            )
+        )
+
+        context["orders"] = orders
+
         return context
 
     @staticmethod
