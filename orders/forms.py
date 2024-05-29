@@ -24,3 +24,4 @@ class CreateOrderForm(forms.Form):
             raise forms.ValidationError("Номер телефона має складатися з 10 цифр")
 
         return data
+

@@ -3,8 +3,6 @@ from django.contrib import admin
 from cart.admin import CartTabAdmin
 from .models import User
 
-from orders.admin import OrderTabulareAdmin
-
 # admin.site.register(User)
 
 
@@ -14,5 +12,5 @@ class UserAdmin(admin.ModelAdmin):
 
     inlines = [
         CartTabAdmin,
-        OrderTabulareAdmin,
     ]
+

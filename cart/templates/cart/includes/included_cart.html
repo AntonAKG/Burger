@@ -76,5 +76,55 @@
 
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.increment, .decrement');
 
-                                
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const cartId = this.getAttribute('data-cart-id');
+            const url = this.getAttribute('data-cart-change-url');
+            const isIncrement = this.classList.contains('increment');
+            const quantityInput = this.closest('.input-group').querySelector('.number');
+            let newQuantity = parseInt(quantityInput.value);
+
+            newQuantity = isIncrement ? newQuantity + 1 : newQuantity - 1;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    'cart-id': cartId,
+                    'quantity': newQuantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.quaantity) {
+                    quantityInput.value = data.quaantity;
+                    document.querySelector('.cart-items').innerHTML = data.cart_items_html;
+                }
+            });
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+             
